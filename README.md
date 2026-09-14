@@ -1,6 +1,6 @@
 # Smart Fitness Session Analyzer
 
-**Assignment:** Python Programming Assignment I — Option A  
+**Assignment:** Python Programming Assignment I - Option A  
 **Student:** hahar1799  
 **Course:** ACIT4420 Problem Solving with Scripting
 
@@ -21,13 +21,13 @@ The application uses only the Python standard library.
 
 ```
 your-repository/
-├── main.py            — entry point; runs all five scenarios
-├── models.py          — domain classes (Participant, Observation, Session, …)
-├── analysis.py        — standalone analysis functions
-├── sample_data.py     — five scenario definitions using the data generator
-├── tests.py           — 45 unit and integration tests (unittest)
-├── data_generator.py  — instructor-supplied data generator (do not modify)
-├── requirements.txt   — empty; standard library only
+├── main.py            - entry point; runs all five scenarios
+├── models.py          - domain classes (Participant, Observation, Session, …)
+├── analysis.py        - standalone analysis functions
+├── sample_data.py     - five scenario definitions using the data generator
+├── tests.py           - 45 unit and integration tests (unittest)
+├── data_generator.py  - instructor-supplied data generator (do not modify)
+├── requirements.txt   - empty; standard library only
 └── README.md
 ```
 
@@ -35,7 +35,7 @@ your-repository/
 
 ## Class design
 
-### `Participant` — `models.py`
+### `Participant` - `models.py`
 Stores the participant identifier and personal baseline reference values
 (resting heart rate, baseline skin response, baseline temperature).
 
@@ -44,7 +44,7 @@ Stores the participant identifier and personal baseline reference values
 - `Participant.from_dict(profile)` is a **class method** that constructs a
   `Participant` directly from the generator's profile dictionary.
 
-### `Observation` — `models.py`
+### `Observation` - `models.py`
 Represents one sensor measurement window. On construction it immediately
 validates all fields and sets `valid`, `low_quality`, and `flags`.
 
@@ -55,13 +55,13 @@ validates all fields and sets `valid`, `low_quality`, and `flags`.
   `signal_quality` is below 0.70. Low-quality observations are excluded from
   analysis alongside invalid ones.
 
-### `InvalidObservation(Observation)` — `models.py`
+### `InvalidObservation(Observation)` - `models.py`
 **Inherits** from `Observation` and **overrides** `_validate` with a no-op,
 because structural problems (entirely missing keys in the raw dictionary) are
 caught before field-level validation is relevant. Used by `Session.from_data`
 when a required key is absent from the raw dict.
 
-### `Session` — `models.py`
+### `Session` - `models.py`
 Groups a `Participant` and a list of `Observation` instances for one recording
 session. This is the primary **composition** site in the design.
 
@@ -88,7 +88,7 @@ session. This is the primary **composition** site in the design.
 
 ---
 
-## Standalone functions — `analysis.py`
+## Standalone functions - `analysis.py`
 
 | Function | Purpose |
 |---|---|
@@ -118,17 +118,17 @@ A `None` value for any field marks the observation invalid.
 
 ### Classification rules (applied in order)
 
-1. **Insufficient data** — fewer than 50 % of observations are usable, or no
+1. **Insufficient data** - fewer than 50 % of observations are usable, or no
    usable heart-rate data is available.
-2. **Recovering** — HR and activity both decline by at least 8 bpm / 0.10
+2. **Recovering** - HR and activity both decline by at least 8 bpm / 0.10
    units between the first two-thirds and the final third of usable
    observations. Recovery is checked before intensity to avoid
    misclassifying a tapering high-intensity session as moderate.
-3. **Resting** — average HR is within +15 bpm of baseline AND average
+3. **Resting** - average HR is within +15 bpm of baseline AND average
    activity ≤ 0.25.
-4. **Moderate activity** — average HR is within +40 bpm of baseline AND
+4. **Moderate activity** - average HR is within +40 bpm of baseline AND
    average activity ≤ 0.65.
-5. **High activity** — everything above the moderate thresholds.
+5. **High activity** - everything above the moderate thresholds.
 
 The minimum-decline thresholds in `detect_recovery` (8 bpm, 0.10 activity)
 prevent natural end-of-session noise from being misread as recovery.
@@ -185,7 +185,7 @@ No third-party packages are required. If your system uses `python` instead of
   Temperature         session 32.8  vs baseline 32.9  (delta -0.0)
 ----------------------------------------------------
   CLASSIFICATION  :  RESTING
-  HR was only +1.2 bpm above baseline and avg activity was 0.14 — consistent with rest.
+  HR was only +1.2 bpm above baseline and avg activity was 0.14 - consistent with rest.
 ----------------------------------------------------
   No flagged observations.
 ====================================================
