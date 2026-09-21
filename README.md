@@ -1,7 +1,7 @@
 # Smart Fitness Session Analyzer
 
 **Assignment:** Python Programming Assignment I - Option A  
-**Student:** hahar1799  
+**Student number:** 364743
 **Course:** ACIT4420 Problem Solving with Scripting
 
 ---
