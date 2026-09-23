@@ -2,6 +2,7 @@
 
 **Assignment:** Python Programming Assignment I - Option A  
 **Student number:** 364743
+**Student name:** Hallvard Hardang
 **Course:** ACIT4420 Problem Solving with Scripting
 
 ---
@@ -56,10 +57,11 @@ validates all fields and sets `valid`, `low_quality`, and `flags`.
   analysis alongside invalid ones.
 
 ### `InvalidObservation(Observation)` - `models.py`
-**Inherits** from `Observation` and **overrides** `_validate` with a no-op,
-because structural problems (entirely missing keys in the raw dictionary) are
-caught before field-level validation is relevant. Used by `Session.from_data`
-when a required key is absent from the raw dict.
+**Inherits** from `Observation` and uses its constructor to initialize the
+shared fields. It **overrides** `_validate` to reject an observation with a
+missing dictionary key and record one structural error instead of misleading
+field-level errors. Used by `Session.from_data` when a required key is absent
+from the raw dict.
 
 ### `Session` - `models.py`
 Groups a `Participant` and a list of `Observation` instances for one recording
