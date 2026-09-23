@@ -160,24 +160,18 @@ class Observation:
 class InvalidObservation(Observation):
     """An observation that was immediately rejected due to a structural problem.
 
-    Inherits from Observation but overrides _validate to mark invalid outright,
-    used when a required key is missing from the raw dictionary entirely.
+    Reuses Observation's initialization, but overrides field validation because
+    a missing dictionary key makes the entire measurement window unusable.
     """
 
     def __init__(self, timestamp, reason: str):
-        # Bypass normal __init__; set fields manually
-        self.timestamp = timestamp
-        self.heart_rate = None
-        self.skin_response = None
-        self.temperature = None
-        self.activity_level = None
-        self.signal_quality = None
-        self.valid = False
-        self.low_quality = False
-        self.flags = [reason]
+        self._reason = reason
+        super().__init__(timestamp, None, None, None, None, None)
 
-    def _validate(self) -> None:  # overridden — nothing to check
-        pass
+    def _validate(self) -> None:
+        """Report the structural error instead of five misleading field errors."""
+        self.valid = False
+        self.flags.append(self._reason)
 
     def __repr__(self) -> str:
         return f"InvalidObservation(t={self.timestamp}, reason={self.flags[0]!r})"
