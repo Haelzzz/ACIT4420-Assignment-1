@@ -158,7 +158,9 @@ class TestInvalidObservation(unittest.TestCase):
     def test_is_invalid(self):
         inv = InvalidObservation(timestamp=0, reason="missing keys: {'heart_rate'}")
         self.assertFalse(inv.valid)
-        self.assertEqual(len(inv.flags), 1)
+        self.assertEqual(inv.flags, ["missing keys: {'heart_rate'}"])
+        self.assertIsNone(inv.heart_rate)
+        self.assertFalse(inv.low_quality)
 
     def test_is_subclass_of_observation(self):
         inv = InvalidObservation(timestamp=1, reason="test")
