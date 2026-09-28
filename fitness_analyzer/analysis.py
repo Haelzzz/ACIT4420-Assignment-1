@@ -5,12 +5,7 @@ objects. No side effects beyond returning values.
 """
 
 import statistics
-from models import Session, Participant
-
-
-# ---------------------------------------------------------------------------
-# 1. Summary
-# ---------------------------------------------------------------------------
+from fitness_analyzer.models import Session, Participant
 
 def calculate_summary(observations: list) -> dict:
     """Return avg / min / max for each numeric field across usable observations.
@@ -44,10 +39,6 @@ def calculate_summary(observations: list) -> dict:
     return summary
 
 
-# ---------------------------------------------------------------------------
-# 2. Validation report
-# ---------------------------------------------------------------------------
-
 def collect_invalid_flags(session: Session) -> list[dict]:
     """Return a list of flag reports for every non-valid or low-quality obs.
 
@@ -59,10 +50,6 @@ def collect_invalid_flags(session: Session) -> list[dict]:
             flagged.append({"timestamp": obs.timestamp, "flags": list(obs.flags)})
     return flagged
 
-
-# ---------------------------------------------------------------------------
-# 3. HR comparison against participant baseline
-# ---------------------------------------------------------------------------
 
 def compare_to_baseline(summary: dict, participant: Participant) -> dict:
     """Compare session averages against the participant's personal baselines.
@@ -104,11 +91,6 @@ def compare_to_baseline(summary: dict, participant: Participant) -> dict:
 
     return comparisons
 
-
-# ---------------------------------------------------------------------------
-# 4. Recovery detection
-# ---------------------------------------------------------------------------
-
 def detect_recovery(observations: list) -> bool:
     """Return True if HR and activity both decline over the final third of obs.
 
@@ -136,19 +118,14 @@ def detect_recovery(observations: list) -> bool:
     return hr_declining and activity_declining
 
 
-# ---------------------------------------------------------------------------
-# 5. Session classification
-# ---------------------------------------------------------------------------
+_HR_DELTA_RESTING = 15       
+_HR_DELTA_MODERATE_MAX = 40  
 
-# Thresholds expressed as HR delta above personal baseline
-_HR_DELTA_RESTING = 15       # within 15 bpm of baseline → resting
-_HR_DELTA_MODERATE_MAX = 40  # 15–40 bpm above baseline → moderate
-# > 40 bpm above baseline → high activity
 
 _ACTIVITY_RESTING_MAX = 0.25
 _ACTIVITY_MODERATE_MAX = 0.65
 
-_MIN_USABLE_RATIO = 0.5      # need ≥ 50 % usable obs to classify
+_MIN_USABLE_RATIO = 0.5      
 
 
 def classify_session(session: Session, summary: dict,
@@ -176,7 +153,6 @@ def classify_session(session: Session, summary: dict,
         "total": total,
     }
 
-    # --- insufficient data --------------------------------------------------
     if total == 0 or (n_usable / total) < _MIN_USABLE_RATIO:
         result["label"] = "insufficient data"
         result["explanation"] = (
@@ -190,14 +166,12 @@ def classify_session(session: Session, summary: dict,
         result["explanation"] = "No usable heart-rate data available."
         return result
 
-    # --- recovery check (takes priority over intensity label) ---------------
     recovery = detect_recovery(usable)
     result["recovery"] = recovery
 
     hr_delta = baseline_comparisons.get("heart_rate", {}).get("delta", 0)
     avg_activity = summary.get("activity_level", {}).get("avg", 0)
 
-    # --- classify intensity -------------------------------------------------
     if recovery:
         result["label"] = "recovering"
         result["explanation"] = (
@@ -227,11 +201,6 @@ def classify_session(session: Session, summary: dict,
         )
 
     return result
-
-
-# ---------------------------------------------------------------------------
-# 6. Console report
-# ---------------------------------------------------------------------------
 
 def format_report(participant: Participant, session: Session,
                   summary: dict, comparisons: dict,
@@ -301,11 +270,6 @@ def format_report(participant: Participant, session: Session,
 
     lines.append("=" * 52)
     return "\n".join(lines)
-
-
-# ---------------------------------------------------------------------------
-# 7. Full pipeline convenience function
-# ---------------------------------------------------------------------------
 
 def analyse_session(participant: Participant, raw_observations: list) -> dict:
     """Run the complete pipeline and return all results as a dict.
