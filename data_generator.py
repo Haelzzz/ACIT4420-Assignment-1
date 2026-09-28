@@ -91,7 +91,7 @@ def generate_fitness_data(
             skin_offset = rng.gauss(0.65, 0.18)
             temperature_offset = rng.gauss(0.55, 0.15)
         elif scenario == "recovery":
-            # Measurements begin high and trend toward the personal baseline.
+
             decline = 1.0 - progress
             hr_offset = rng.gauss(8 + 55 * decline, 4)
             activity = _clamp(rng.gauss(0.10 + 0.75 * decline, 0.05), 0, 1)
