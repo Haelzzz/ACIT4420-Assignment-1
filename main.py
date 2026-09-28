@@ -1,4 +1,4 @@
-"""Smart Fitness Session Analyzer — entry point.
+"""Smart Fitness Session Analyzer - entry point.
 
 Run from the repository root:
     python3 main.py --profiles data/participants.csv \
@@ -71,7 +71,7 @@ def run(profiles_path: Path, sessions_paths: list[Path], output_dir: Path) -> No
         try:
             sessions, rejected = load_sessions(path, participants)
         except (FileNotFoundError, PermissionError) as exc:
-            print(f"  [ERROR] {exc} — skipping file.")
+            print(f"  [ERROR] {exc} - skipping file.")
             continue
 
         accepted_rows = sum(len(s["rows"]) for s in sessions.values())
